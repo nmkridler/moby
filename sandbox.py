@@ -15,8 +15,8 @@ reload(fileio)
 def main():
 	# Parameters
 	outputAverage = True
-	baseDir = 'C:/Users/Nick/Desktop/RightWhale/'
-	dataDir = baseDir+'data/whale_data/data/'
+	baseDir = ''
+	dataDir = baseDir+''
 	params = {'NFFT':64, 'Fs':2000, 'noverlap':48}
 
 	# Training Data
