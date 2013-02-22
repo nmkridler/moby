@@ -12,10 +12,10 @@ def PSD(s):
 	return f, p*p	
 
 def CreateMask(img, lower):
-	mask = np.empty(img.shape, dtype='Float32')
+	mask = np.zeros(img.shape, dtype='Float32')
 	mask[img >= lower] = 1.0
 	return mask
 	
 def Dilate(img, ksize=7):
 	kernel = np.ones((ksize,ksize), 'Float32')
-	return cv2.dilate(mask, kernel)
+	return cv2.dilate(img, kernel)
