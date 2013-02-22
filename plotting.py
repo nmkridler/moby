@@ -42,6 +42,7 @@ def PlotSpecgram(P, freqs, bins):
 	extent = xmin, xmax, freqs[0], freqs[-1]
 	pl.figure()
 	im = pl.imshow(Z, extent=extent)
+	pl.axis('auto')
 	pl.xlim([0.0, bins[-1]])
 	pl.ylim([0, 400])
 	pl.show()

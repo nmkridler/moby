@@ -14,9 +14,9 @@ reload(fileio)
 
 def main():
 	# Parameters
-	outputAverage = True
-	baseDir = ''
-	dataDir = baseDir+''
+	outputAverage = False
+	baseDir = 'C:/Users/Nick/Desktop/RightWhale/'
+	dataDir = baseDir+'data/whale_data/data/'
 	params = {'NFFT':64, 'Fs':2000, 'noverlap':48}
 
 	# Training Data
@@ -28,9 +28,9 @@ def main():
 		h0name = baseDir+'workspace/h0mean.csv'
 		fileio.OutputAverages(train, h0name, h1name, params)
 		
-	P, freqs, bins = train.H1Sample()
+	P, freqs, bins = train.H1Sample(params=params)
 	plotting.PlotSpecgram(P, freqs, bins)
-	P, freqs, bins = train.H0Sample()
+	P, freqs, bins = train.H0Sample(params=params)
 	plotting.PlotSpecgram(P, freqs, bins)
 
 if __name__ == "__main__":

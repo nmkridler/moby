@@ -10,16 +10,16 @@ def ReadAIFF(file):
 	strSig = s.readframes(nFrames)
 	return np.fromstring(strSig, np.short).byteswap()
 
-def OutputAverages(train, h0name='', h1name='', params):
-	avgP, freqs, bins = train.H1Sample(0)
+def OutputAverages(train, h0name='', h1name='', params=None):
+	avgP, freqs, bins = train.H1Sample(0,params)
 	for index in range(1,train.numH1):
-		P, freqs, bins = train.H1Sample(index)
+		P, freqs, bins = train.H1Sample(index, params)
 		avgP += P
 	np.savetxt(h1name, avgP/train.numH1, delimiter=',')
 	
-	avgP, freqs, bins = train.H0Sample(0)
+	avgP, freqs, bins = train.H0Sample(0,params)
 	for index in range(1,train.numH0):
-		P, freqs, bins = train.H0Sample(index)
+		P, freqs, bins = train.H0Sample(index, params)
 		avgP += P
 	np.savetxt(h0name, avgP/train.numH0, delimiter=',')	
 	
@@ -45,30 +45,30 @@ class TrainData(object):
 		self.numH1 = len(self.h1)
 		self.numH0 = len(self.h0)
 		
-	def H1Sample(self, index=None, params):
+	def H1Sample(self, index=None, params=None):
 		if index == None:
 			index = random.randint(0,self.numH1-1)
 		s = ReadAIFF(self.dataDir+self.h1[index])
 		s = (s - np.mean(s))/np.std(s)
 		return mlab.specgram(s, **params)
 			
-	def H0Sample(self, index=None, params):
+	def H0Sample(self, index=None, params=None):
 		if index == None:
 			index = random.randint(0,self.numH0-1)
 		s = ReadAIFF(self.dataDir+self.h0[index])
 		s = (s - np.mean(s))/np.std(s)
 		return mlab.specgram(s, **params)
 		
-class TrainData(object):
+class TestData(object):
 	def __init__(self, fileName='', dataDir=''):
 		self.fileName = fileName
 		self.dataDir = dataDir
 		self.test = range(1,54504)
 		self.nTest = 54503
 
-	def TestSample(self, index=None, params):
+	def TestSample(self, index=None, params=None):
 		if index == None:
 			index = random.randint(1,self.nTest)
-		s = ReadAIFF(dataDir+'test'+('%i'%index)+'.aiff')
+		s = ReadAIFF(self.dataDir+'test'+('%i'%index)+'.aiff')
 		s = (s - np.mean(s))/np.std(s)
 		return mlab.specgram(s, **params)
