@@ -1,6 +1,6 @@
 import random
 import numpy as np
-from sklearn.preprocessing import Scaler
+from sklearn.preprocessing import StandardScaler
 from plotting import *
 
 class Classify(object):
@@ -9,7 +9,7 @@ class Classify(object):
 		self.truth = []
 		self.loadTrain(trainFile)
 		self.m, self.n = self.train.shape
-		self.scaler = Scaler()
+		self.scaler = StandardScaler()
 		self.scaler.fit(self.train)
 		
 	def loadTrain(self, trainFile=''):
@@ -17,11 +17,11 @@ class Classify(object):
 		self.hdr = file.readline().split('\n')[0].split(',')[1:]
 		for line in file.readlines():
 			tokens = line.split('\n')[0].split(',')
-			self.truth.append(int(tokens[0]))
+			self.truth.append(float(tokens[0]))
 			self.train.append([float(x) for x in tokens[1:]])
 		self.train = np.array(self.train)
 		self.truth = np.array(self.truth)
-		self.file.close()
+		file.close()
 		
 	def shuffle(self, seed=0):
 		p = range(self.m)
@@ -32,7 +32,7 @@ class Classify(object):
 	def validate(self, clf, nFolds=4, featureImportance=False):
 		X, y = self.shuffle()
 		
-		delta = m/nFolds
+		delta = self.m/nFolds
 		idx = np.arange(self.m)
 		y_ = np.empty((self.m,2))
 		for fold in range(nFolds-1):
@@ -54,7 +54,7 @@ class Classify(object):
 			print "Feature ranking:"
 			importances = clf.feature_importances_
 			indices = np.argsort(importances)[::-1]
-			for f in xrange(10):
+			for f in xrange(min(10,self.n)):
 				print "%d. feature (%d,%f)" % (f + 1, indices[f], importances[indices[f]])
 		
 		

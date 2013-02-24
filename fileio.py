@@ -3,12 +3,22 @@ import numpy as np
 import aifc
 import scipy.fftpack as spFFT
 from matplotlib import mlab
+import cv2
+import filters
+reload(filters)
 
 def ReadAIFF(file):
 	s = aifc.open(file,'r')
 	nFrames = s.getnframes()
 	strSig = s.readframes(nFrames)
 	return np.fromstring(strSig, np.short).byteswap()
+
+def Demedian(P):
+	m, n = P.shape
+	psum = np.mean(P,0)
+	for i in range(m):
+		P[i,:] -= np.median(P[i,:])
+	return P
 
 def OutputAverages(train, h0name='', h1name='', params=None):
 	avgP, freqs, bins = train.H1Sample(0,params)
@@ -30,7 +40,7 @@ class TrainData(object):
 		self.h1 = []
 		self.h0 = []
 		self.Load()
-
+		self.step = 32
 	def Load(self):
 		file = open(self.fileName, 'r')
 		self.hdr = file.readline().split('\n')[0].split(',')
@@ -48,20 +58,51 @@ class TrainData(object):
 	def H1Sample(self, index=None, params=None):
 		if index == None:
 			index = random.randint(0,self.numH1-1)
+			print index
 		s = ReadAIFF(self.dataDir+self.h1[index])
-		s = (s - np.mean(s))/np.std(s)
-		return mlab.specgram(s, **params)
+		step = 2
+		P, freqs, bins = mlab.specgram(s[::step], **params)
+		for i in range(1,step):
+			Pi, freqs, bins = mlab.specgram(s[i::step], **params)
+			P += Pi
+		P /= step
+		return P, freqs, bins
 			
 	def H0Sample(self, index=None, params=None):
 		if index == None:
 			index = random.randint(0,self.numH0-1)
 		s = ReadAIFF(self.dataDir+self.h0[index])
 		s = (s - np.mean(s))/np.std(s)
-		return mlab.specgram(s, **params)
+		step = 2
+		P, freqs, bins = mlab.specgram(s[::step], **params)
+		for i in range(1,step):
+			Pi, freqs, bins = mlab.specgram(s[i::step], **params)
+			P += Pi
+		P /= step
+		return P, freqs, bins
+
+	def PSDH1(self, index=None):
+		if index == None:
+			index = random.randint(0,self.numH1-1)
+		s = ReadAIFF(self.dataDir+self.h1[index])
+		freqs, P = filters.PSD(s[::self.step])
+		for i in range(1,self.step):
+			freqs, Pi = filters.PSD(s[i::self.step])
+			P += Pi
+		return freqs, P
+			
+	def PSDH0(self, index=None):
+		if index == None:
+			index = random.randint(0,self.numH0-1)
+		s = ReadAIFF(self.dataDir+self.h0[index])
+		freqs, P = filters.PSD(s[::self.step])
+		for i in range(1,self.step):
+			freqs, Pi = filters.PSD(s[i::self.step])
+			P += Pi
+		return freqs, P
 		
 class TestData(object):
-	def __init__(self, fileName='', dataDir=''):
-		self.fileName = fileName
+	def __init__(self, dataDir=''):
 		self.dataDir = dataDir
 		self.test = range(1,54504)
 		self.nTest = 54503
@@ -70,5 +111,20 @@ class TestData(object):
 		if index == None:
 			index = random.randint(1,self.nTest)
 		s = ReadAIFF(self.dataDir+'test'+('%i'%index)+'.aiff')
-		s = (s - np.mean(s))/np.std(s)
-		return mlab.specgram(s, **params)
+		step = 2
+		P, freqs, bins = mlab.specgram(s[::step], **params)
+		for i in range(1,step):
+			Pi, freqs, bins = mlab.specgram(s[i::step], **params)
+			P += Pi
+		P /= step
+		return P, freqs, bins
+
+	def PSDtest(self, index=None):
+		if index == None:
+			index = random.randint(0,self.nTest-1)
+		s = ReadAIFF(self.dataDir+'test'+('%i'%index)+'.aiff')
+		freqs, P = filters.PSD(s[::self.step])
+		for i in range(1,self.step):
+			freqs, Pi = filters.PSD(s[i::self.step])
+			P += Pi
+		return freqs, P
