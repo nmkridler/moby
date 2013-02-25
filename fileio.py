@@ -60,25 +60,14 @@ class TrainData(object):
 			index = random.randint(0,self.numH1-1)
 			print index
 		s = ReadAIFF(self.dataDir+self.h1[index])
-		step = 2
-		P, freqs, bins = mlab.specgram(s[::step], **params)
-		for i in range(1,step):
-			Pi, freqs, bins = mlab.specgram(s[i::step], **params)
-			P += Pi
-		P /= step
+		P, freqs, bins = mlab.specgram(s, **params)
 		return P, freqs, bins
 			
 	def H0Sample(self, index=None, params=None):
 		if index == None:
 			index = random.randint(0,self.numH0-1)
 		s = ReadAIFF(self.dataDir+self.h0[index])
-		s = (s - np.mean(s))/np.std(s)
-		step = 2
-		P, freqs, bins = mlab.specgram(s[::step], **params)
-		for i in range(1,step):
-			Pi, freqs, bins = mlab.specgram(s[i::step], **params)
-			P += Pi
-		P /= step
+		P, freqs, bins = mlab.specgram(s, **params)
 		return P, freqs, bins
 
 	def PSDH1(self, index=None):
@@ -89,7 +78,7 @@ class TrainData(object):
 		for i in range(1,self.step):
 			freqs, Pi = filters.PSD(s[i::self.step])
 			P += Pi
-		return freqs, P
+		return freqs, P/self.step
 			
 	def PSDH0(self, index=None):
 		if index == None:
@@ -99,24 +88,20 @@ class TrainData(object):
 		for i in range(1,self.step):
 			freqs, Pi = filters.PSD(s[i::self.step])
 			P += Pi
-		return freqs, P
+		return freqs, P/self.step
 		
 class TestData(object):
 	def __init__(self, dataDir=''):
 		self.dataDir = dataDir
 		self.test = range(1,54504)
+		self.step = 32
 		self.nTest = 54503
 
 	def TestSample(self, index=None, params=None):
 		if index == None:
 			index = random.randint(1,self.nTest)
 		s = ReadAIFF(self.dataDir+'test'+('%i'%index)+'.aiff')
-		step = 2
-		P, freqs, bins = mlab.specgram(s[::step], **params)
-		for i in range(1,step):
-			Pi, freqs, bins = mlab.specgram(s[i::step], **params)
-			P += Pi
-		P /= step
+		P, freqs, bins = mlab.specgram(s, **params)
 		return P, freqs, bins
 
 	def PSDtest(self, index=None):
@@ -127,4 +112,4 @@ class TestData(object):
 		for i in range(1,self.step):
 			freqs, Pi = filters.PSD(s[i::self.step])
 			P += Pi
-		return freqs, P
+		return freqs, P/self.step

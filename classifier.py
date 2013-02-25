@@ -58,8 +58,8 @@ class Classify(object):
 				print "%d. feature (%d,%f)" % (f + 1, indices[f], importances[indices[f]])
 		
 		
-	def testAndOutput(self, testFile='', outfile='sub.csv'):
-		test = self.scaler(np.loadtxt(testFile, delimiter=','))
+	def testAndOutput(self, clf=None, testFile='', outfile='sub.csv'):
+		test = self.scaler.transform(np.loadtxt(testFile, delimiter=','))
 		X, y = self.shuffle()
 		clf.fit(X,y)
 		y_ =  clf.predict_proba(test)

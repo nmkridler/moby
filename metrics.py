@@ -27,14 +27,13 @@ def lineFit(P, freqs, bins):
 	z = np.polyfit(x,y,3,w=weight)
 	return [zi for zi in z]
 
-def matchTemplate(P, template, xoff, yoff):
+def matchTemplate(P, template):
 	m, n = P.shape
 	mf = cv2.matchTemplate(P.astype('Float32'), 
 						   template, cv2.TM_CCOEFF_NORMED)
 	minVal, maxVal, minLoc, maxLoc = cv2.minMaxLoc(mf)
-	x, y = maxLoc[1] + xoff, maxLoc[0] + yoff
 	#print x, m, template.shape, maxLoc
-	return [mf.max(), maxLoc[0] ,maxLoc[1]] + [P[x,i] for i in range(n)]
+	return [mf.max(), maxLoc[0] ,maxLoc[1]] 
 
 def correlate(x, y):
 	xx, yy, xy = np.dot(x,x), np.dot(y,y), np.dot(x,y)
