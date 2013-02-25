@@ -32,7 +32,6 @@ def matchTemplate(P, template):
 	mf = cv2.matchTemplate(P.astype('Float32'), 
 						   template, cv2.TM_CCOEFF_NORMED)
 	minVal, maxVal, minLoc, maxLoc = cv2.minMaxLoc(mf)
-	#print x, m, template.shape, maxLoc
 	return [mf.max(), maxLoc[0] ,maxLoc[1]] 
 
 def correlate(x, y):

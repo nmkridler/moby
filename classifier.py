@@ -24,10 +24,10 @@ class Classify(object):
 		file.close()
 		
 	def shuffle(self, seed=0):
-		p = range(self.m)
+		self.p = range(self.m)
 		random.seed(seed)
-		random.shuffle(p)
-		return self.scaler.transform(self.train[p,:]), self.truth[p]
+		random.shuffle(self.p)
+		return self.scaler.transform(self.train[self.p,:]), self.truth[self.p]
 		
 	def validate(self, clf, nFolds=4, featureImportance=False):
 		X, y = self.shuffle()
@@ -49,7 +49,12 @@ class Classify(object):
 		y_[testIdx,:] = clf.predict_proba(X[testIdx,:])
 		
 		PlotROC(y, y_[:,1])
-		
+		# Save to file
+		outP = np.empty((self.m,3))
+		for i in range(self.m):
+			outP[i,:] = np.array([y[i], self.p[i], y_[i,1]])
+		np.savetxt("/Users/nkridler/Desktop/whale/workspace/proba.csv",outP,delimiter=',')
+
 		if featureImportance:
 			print "Feature ranking:"
 			importances = clf.feature_importances_
