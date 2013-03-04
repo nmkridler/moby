@@ -22,7 +22,15 @@ class Classify(object):
 		self.train = np.array(self.train)
 		self.truth = np.array(self.truth)
 		file.close()
-		
+
+		#indices = []
+		#file = open("/Users/nkridler/Desktop/whale/workspace/features.csv",'r')
+		#for line in file.readlines()[:20]:
+		#	indices.append(int(line.split('\n')[0]))
+		#file.close()
+		#self.train = self.train[:, np.array(indices)]
+		#np.savetxt("/Users/nkridler/Desktop/whale/workspace/reduced.csv",self.train,delimiter=',')
+
 	def shuffle(self, seed=0):
 		self.p = range(self.m)
 		random.seed(seed)
@@ -59,9 +67,11 @@ class Classify(object):
 			print "Feature ranking:"
 			importances = clf.feature_importances_
 			indices = np.argsort(importances)[::-1]
-			for f in xrange(min(10,self.n)):
+			#out = open("/Users/nkridler/Desktop/whale/workspace/features.csv",'w')
+			for f in xrange(min(100,self.n)):
+				#out.write("%d\n"%indices[f])
 				print "%d. feature (%d,%f)" % (f + 1, indices[f], importances[indices[f]])
-		
+			#out.close()	
 		
 	def testAndOutput(self, clf=None, testFile='', outfile='sub.csv'):
 		test = self.scaler.transform(np.loadtxt(testFile, delimiter=','))

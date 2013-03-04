@@ -16,6 +16,7 @@ def CreateMask(img, lower):
 	mask[img >= lower] = 1.0
 	return mask
 	
-def Dilate(img, ksize=7):
+def Dilate(img, ksize=3):
 	kernel = np.ones((ksize,ksize), 'Float32')
+	img = cv2.erode(img, kernel)
 	return cv2.dilate(img, kernel)

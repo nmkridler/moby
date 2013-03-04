@@ -13,13 +13,6 @@ def ReadAIFF(file):
 	strSig = s.readframes(nFrames)
 	return np.fromstring(strSig, np.short).byteswap()
 
-def Demedian(P):
-	m, n = P.shape
-	psum = np.mean(P,0)
-	for i in range(m):
-		P[i,:] -= np.median(P[i,:])
-	return P
-
 def OutputAverages(train, h0name='', h1name='', params=None):
 	avgP, freqs, bins = train.H1Sample(0,params)
 	for index in range(1,train.numH1):
