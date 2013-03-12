@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 import cv2.cv as cv
 from scipy import polyval, polyfit
-
+import pylab as pl
 
 def lineFit(P, freqs, bins):
 	m, n = P.shape
@@ -40,19 +40,15 @@ def getMaxPath(P, ksize=3, maxM=15):
 	v = power[:maxM].argmax()
 	return index[v,:]
 
-def slidingWindow(P,inner=7,maxM = 50):
+def slidingWindow(P,inner=3,maxM = 50):
 	""""""
 	m, n = P.shape
 	mval, sval = np.mean(P), np.std(P)
 	P[P > mval + sval] = mval + sval
 	P[P < mval - sval] = mval - sval
-
-	Q = np.zeros((maxM,n))
 	wInner = np.ones(inner)
-	
-	for i in range(maxM):
-		Q[i,:] = P[i,:] - (np.sum(P[i,:]) - np.convolve(P[i,:],wInner,'same'))/(n - inner)
 
+	Q = P[:maxM,:].copy()
 	for i in range(n):
 		Q[:,i] = Q[:,i] - (np.sum(Q[:,i]) - np.convolve(Q[:,i],wInner,'same'))/(maxM - inner)
 
@@ -68,6 +64,18 @@ def pathMetrics(P, freqs, bins):
 	minT, maxT, minF, maxF = bins[minI], bins[maxI], freqs[mp[minI]], freqs[mp[maxI]]
 	return u + [minT, maxT, maxT - minT, minF, maxF, maxF - minF]
 
+def elongation(m):
+    x = m['mu20'] + m['mu02']
+    y = 4 * m['mu11']**2 + (m['mu20'] - m['mu02'])**2
+    return (x + y**0.5) / (x - y**0.5)
+
+def spectrumMetrics(P, freqs):
+	""""""
+	m, n = P.shape
+	cf_ = [np.sum(P[:,i]*freqs)/np.sum(P[:,i]) for i in range(40,n)]
+
+	return cf_
+
 def templateMetrics(P, tmpl, freqs, bins):
 	""""""
 	maxs, xs, ys = [], [], []
@@ -81,12 +89,18 @@ def templateMetrics(P, tmpl, freqs, bins):
 	tmpHit = [0]*(tmpl.size+1)
 	tmpHit[maxMF] = 1
 
-	maxTime, minTime = bins[tmpl.n[maxMF] + ys[maxMF] - 1], bins[ys[maxMF]]
+	t0, t1 = ys[maxMF], tmpl.n[maxMF] + ys[maxMF]
+	f0, f1 = xs[maxMF], tmpl.m[maxMF] + xs[maxMF]
+ 	maxTime, minTime = bins[t1-1], bins[t0]
 	timeLength = maxTime - minTime
-	maxFreq, minFreq = freqs[tmpl.m[maxMF] + xs[maxMF] - 1], freqs[xs[maxMF]] 
+	maxFreq, minFreq = freqs[f1-1], freqs[f0] 
 	freqLength = maxFreq - minFreq	
-	aux = [minFreq, maxFreq, minTime, maxTime, timeLength, freqLength]
-	return maxs + xs + ys + tmpHit + aux
+	aux = [minFreq, maxFreq, minTime, maxTime, timeLength, freqLength, 
+		np.mean(maxs), np.std(maxs), min(maxs), maxs[maxMF]]
+	mom_ = cv2.moments(P[f0:f1,t0:t1])
+	x_, y_ = mom_['m10']/mom_['m00'], mom_['m01']/mom_['m00']
+	m_, s_ = np.mean(P[f0:f1,t0:t1]), np.std(P[f0:f1,t0:t1])
+	return maxs + xs + ys + tmpHit + aux + [x_, y_, m_, s_, elongation(mom_)]
 
 
 

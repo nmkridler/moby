@@ -55,8 +55,8 @@ class TemplateManager(object):
 		"""Spectrogram"""
 		if index == None:
 			index = random.randint(0,len(self.templates))
-		Z = 10. * np.log10(self.templates[index])
-		Z = np.flipud(Z)
+		#Z = 10. * np.log10(self.templates[index])
+		Z = np.flipud(self.templates[index])
 		
 		x0, xn, y0, yn = self.limits[index]
 		extent = x0, xn, y0, yn

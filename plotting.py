@@ -49,17 +49,28 @@ def PlotSpecgram(P, freqs, bins):
 	
 def PlotSpecLine(P, freqs, bins, x, y):
 	"""Spectrogram"""
-	Z = 10. * np.log10(P)
-	Z = np.flipud(Z)
+	#Z = 10. * np.log10(P)
+	Z = np.flipud(P)
 
 	xextent = 0, np.amax(bins)
 	xmin, xmax = xextent
 	extent = xmin, xmax, freqs[0], freqs[-1]
 	pl.figure()
 	im = pl.imshow(Z, extent=extent)
-	pl.plot([bins[i] for i in x],[freqs[i] for i in y],color='black')
-	#pl.plot(x,y,color='black')
+	#pl.plot([bins[i] for i in x],[freqs[i] for i in y],color='black')
+	pl.plot(x,y,color='black')
 	pl.axis('auto')
 	pl.xlim([0.0, bins[-1]])
 	pl.ylim([0, 400])
 	pl.show()	
+
+def PlotMFCC(P):
+	"""Spectrogram"""
+	#Z = 10. * np.log10(P)
+	Z = np.flipud(P).transpose()
+	pl.figure()
+	im = pl.imshow(Z)
+	pl.axis('auto')
+	pl.xlim([0.0, 200])
+	pl.ylim([0, 12])
+	pl.show()

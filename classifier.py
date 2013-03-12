@@ -23,12 +23,14 @@ class Classify(object):
 		self.truth = np.array(self.truth)
 		file.close()
 
-		#indices = []
-		#file = open("/Users/nkridler/Desktop/whale/workspace/features.csv",'r')
-		#for line in file.readlines()[:20]:
-		#	indices.append(int(line.split('\n')[0]))
-		#file.close()
-		#self.train = self.train[:, np.array(indices)]
+		if True:
+			indices = []
+			file = open("/Users/nkridler/Desktop/whale/workspace/features.csv",'r')
+			for line in file.readlines()[:80]:
+				indices.append(int(line.split('\n')[0]))
+			file.close()
+			self.indices = np.array(indices)
+			self.train = self.train[:, np.array(indices)]
 		#np.savetxt("/Users/nkridler/Desktop/whale/workspace/reduced.csv",self.train,delimiter=',')
 
 	def shuffle(self, seed=0):
@@ -61,20 +63,23 @@ class Classify(object):
 		outP = np.empty((self.m,3))
 		for i in range(self.m):
 			outP[i,:] = np.array([y[i], self.p[i], y_[i,1]])
-		np.savetxt("/Users/nkridler/Desktop/whale/workspace/proba.csv",outP,delimiter=',')
+		#np.savetxt("/Users/nkridler/Desktop/whale/workspace/proba.csv",outP,delimiter=',')
 
 		if featureImportance:
 			print "Feature ranking:"
 			importances = clf.feature_importances_
 			indices = np.argsort(importances)[::-1]
-			#out = open("/Users/nkridler/Desktop/whale/workspace/features.csv",'w')
-			for f in xrange(min(100,self.n)):
-				#out.write("%d\n"%indices[f])
+			for f in xrange(min(10,self.n)):
 				print "%d. feature (%d,%f)" % (f + 1, indices[f], importances[indices[f]])
-			#out.close()	
+			if False:	
+				out = open("/Users/nkridler/Desktop/whale/workspace/features.csv",'w')
+				for f in xrange(min(100,self.n)):
+					out.write("%d\n"%indices[f])
+				out.close()	
 		
 	def testAndOutput(self, clf=None, testFile='', outfile='sub.csv'):
-		test = self.scaler.transform(np.loadtxt(testFile, delimiter=','))
+		#test = self.scaler.transform(np.loadtxt(testFile, delimiter=','))
+		test = self.scaler.transform(np.loadtxt(testFile, delimiter=',')[:,self.indices])
 		X, y = self.shuffle()
 		clf.fit(X,y)
 		y_ =  clf.predict_proba(test)
