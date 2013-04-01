@@ -5,7 +5,19 @@ import scipy.fftpack as spFFT
 from matplotlib import mlab
 import cv2
 import filters
+from glob import glob
 reload(filters)
+
+def Duplicates(dir):
+	seen = set()
+	dupes = []
+	for fn in glob(dir+"*.aiff"):
+		contents = open(fn).read()
+		if contents in seen:
+			dupes.append(fn.split('/')[-1])
+		else:
+			seen.add(contents)
+	return dupes
 
 def ReadAIFF(file):
 	s = aifc.open(file,'r')
@@ -28,6 +40,8 @@ def OutputAverages(train, h0name='', h1name='', params=None):
 	
 class TrainData(object):
 	def __init__(self, fileName='', dataDir=''):
+		#self.duplicates = Duplicates(dataDir)
+		#print self.duplicates[:10]
 		self.fileName = fileName
 		self.dataDir = dataDir
 		self.h1 = []
