@@ -101,7 +101,7 @@ def main():
 				print i
 			P, freqs, bins = train.H1Sample(i,params=params)
 			Q = metrics.slidingWindowV(P,inner=3,maxM=40)
-			W = metrics.slidingWindowH(P,inner=3,outer=32,maxM=65) # best: 3,32,60
+			W = metrics.slidingWindowH(P,inner=3,outer=32,maxM=60) # best: 3,32,60
 			out = metrics.templateMetrics(Q, tmpl)	
 			out += metrics.templateMetrics(W, tmpl)	
 			#out += metrics.spectrumMetrics(P,Q,freqs,up_)
@@ -116,7 +116,7 @@ def main():
 				print i
 			P, freqs, bins = train.H0Sample(i,params=params)
 			Q = metrics.slidingWindowV(P,inner=3,maxM=40)
-			W = metrics.slidingWindowH(P,inner=3,outer=32,maxM=65)
+			W = metrics.slidingWindowH(P,inner=3,outer=32,maxM=60)
 			out = metrics.templateMetrics(Q, tmpl)	
 			out += metrics.templateMetrics(W, tmpl)	
 			#out += metrics.spectrumMetrics(P,Q,freqs,up_)
@@ -141,7 +141,7 @@ def main():
 			if i % 1000 == 0 : 
 				print i
 			P, freqs, bins = test.TestSample(i+1,params=params)
-			Q = metrics.slidingWindowV(P,inner=2,maxM=40)
+			Q = metrics.slidingWindowV(P,inner=3,maxM=40)
 			W = metrics.slidingWindowH(P,inner=3,outer=32,maxM=60)
 			out = metrics.templateMetrics(Q, tmpl)	
 			out += metrics.templateMetrics(W, tmpl)	

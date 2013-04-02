@@ -42,7 +42,7 @@ class TemplateManager(object):
 	
 	def getTemplates(self):
 		"""Read templates"""
-		e_ = cv2.getStructuringElement(cv2.MORPH_RECT,(1,1))
+		e_ = cv2.getStructuringElement(cv2.MORPH_RECT,(3,3))
 		for maps in self.info:
 			# Determine if it's an H1 or an H0 template
 			self.flag.append(maps['class'])
@@ -63,9 +63,9 @@ class TemplateManager(object):
 			tmpl[ tmpl < m_ + 0.5*s_] = min_ 
 			tmpl[ tmpl > min_ ] = 1
 			tmpl[tmpl < 0] = 0
-			tmpl = cv2.erode(tmpl,e_,iterations=2) 
-			tmpl = cv2.dilate(tmpl,e_,iterations=2) 
-			tmpl = cv2.GaussianBlur(tmpl,(3,3),0)
+			#tmpl = cv2.erode(tmpl,e_,iterations=1) 
+			#tmpl = cv2.dilate(tmpl,e_,iterations=1) 
+			#tmpl = cv2.GaussianBlur(tmpl,(3,3),0)
 
 			# Add meta-data to the list
 			self.templates.append(tmpl)

@@ -21,7 +21,7 @@ def slidingWindow(P,inX=3,outX=32,inY=3,outY=64,maxM=50,norm=True):
 	m, n = Q.shape
 	if norm:
 		mval, sval = np.mean(Q[:maxM,:]), np.std(Q[:maxM,:])
-		fact_ = 1.0
+		fact_ = 1.5
 		Q[Q > mval + fact_*sval] = mval + fact_*sval
 		Q[Q < mval - fact_*sval] = mval - fact_*sval
 	wInner = np.ones((inY,inX))
@@ -87,13 +87,13 @@ def oopsMetrics(P, b,maxM=50):
 		
 def highFreqTemplate(P, tmpl, bins):
 	"""Look for bands at high frequencies"""
-	Q = slidingWindowH(P,inner=7,norm=True)[38:,:]	
+	Q = slidingWindowH(P,inner=7,maxM=50,norm=True)[38:,:]	
 	mf = cv2.matchTemplate(Q.astype('Float32'), tmpl, cv2.TM_CCOEFF_NORMED)
 	return [mf.max()]
 
 def highFreqMetrics(P, bins):
 	"""Look for variation at high frequencies"""
-	Q = slidingWindowH(P,inner=7,norm=True)[25:,:]	
+	Q = slidingWindowH(P,inner=7,maxM=50,norm=True)[25:,:]	
 	m, n = Q.shape
 	cf_ = np.empty(m)
 	bw_ = np.empty(m)

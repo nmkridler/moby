@@ -6,9 +6,9 @@ from sklearn.ensemble import GradientBoostingClassifier
 def main():
 	baseDir = '/Users/nkridler/Desktop/whale/'
 	if True:
-		params = {'max_depth':10, 'subsample':0.5, 'verbose':2,
+		params = {'max_depth':12, 'subsample':0.5, 'verbose':2,
 			'min_samples_split':20, 'min_samples_leaf':20,
-			'n_estimators': 500, 'learning_rate': 0.05, 'max_features':30}
+			'n_estimators': 500, 'learning_rate': 0.05, 'max_features':20}
 			#'n_estimators': 12000, 'learning_rate': 0.002, 'max_features':30}
 		clf = GradientBoostingClassifier(**params)	
 	else:
