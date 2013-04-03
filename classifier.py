@@ -27,12 +27,23 @@ class Classify(object):
 		
 	def loadTrain(self, trainFile=''):
 		d_ = pd.read_csv(trainFile)
+		d_['proba'] = 0.
+		p_ = pd.read_csv('/Users/nkridler/Desktop/whale/moby/corr.csv')
+		nH1 = int(np.sum(p_.Truth))
+		for id_ in range(p_.Index.size):
+			if int(p_.Truth[id_]) == 1:
+				d_.proba[int(p_.Index[id_])] = p_.Proba[id_]
+			else:
+				d_.proba[int(p_.Index[id_])+nH1] = p_.Proba[id_]
+
 		self.truth = np.array(d_.Truth)
 		self.index = np.array(d_.Index)
 		self.train = np.array(d_.ix[:,2:])
 		self.hdr = d_.columns[2:]
+	
 		m, n = self.train.shape
-		#ignore_ = [ 12, 14, 17, 69, 74, 86, 247, 248] + range(239,246)
+		#iignore_ = [ 12, 14, 17, 69, 74, 86, 247, 248] + range(239,246)
+		#ignore_ = range(239,246)
 		#indices = [j for j in range(n) if j not in ignore_]
 		#indices = range(140) + range(159,309) + range(359,n)  # + range(347,n) # 0.97659 -500
 		#print [self.hdr[j] for j in indices]
@@ -68,16 +79,16 @@ class Classify(object):
 			testIdx = (idx >= fold*delta) & (idx < (fold+1)*delta)
 			clf.fit(X[trainIdx,:],y[trainIdx])
 			y_[testIdx,:] = clf.predict_proba(X[testIdx,:])
-			getAuc(clf,X[testIdx,:],y[testIdx],params['n_estimators'])
+			#getAuc(clf,X[testIdx,:],y[testIdx],params['n_estimators'])
 	
 		# Last fold	
 		trainIdx = idx < (nFolds-1)*delta
 		testIdx = idx >= (nFolds-1)*delta
 		clf.fit(X[trainIdx,:],y[trainIdx])
 		y_[testIdx,:] = clf.predict_proba(X[testIdx,:])
-		getAuc(clf,X[testIdx,:],y[testIdx],params['n_estimators'])
-		pl.ylim([0.96,0.985])
-		pl.show()
+		#getAuc(clf,X[testIdx,:],y[testIdx],params['n_estimators'])
+		#pl.ylim([0.96,0.985])
+		#pl.show()
 
 		PlotROC(y, y_[:,1])
 		pl.show()
@@ -85,7 +96,7 @@ class Classify(object):
 		outP = np.empty((self.m,3))
 		for i in range(self.m):
 			outP[i,:] = np.array([y[i], self.index[self.p[i]], y_[i,1]])
-		np.savetxt("/Users/nkridler/Desktop/whale/workspace/probaBaseGBM.csv",outP,delimiter=',')
+		np.savetxt("/Users/nkridler/Desktop/whale/workspace/probaBaseRF.csv",outP,delimiter=',')
 
 		if featureImportance:
 			print "Feature ranking:"
@@ -103,7 +114,10 @@ class Classify(object):
 				out.close()	
 	
 	def testAndOutput(self, clf=None, testFile='', outfile='sub.csv'):
-		test = self.scaler.transform(np.loadtxt(testFile, delimiter=',',skiprows=1))
+		tf_ = pd.read_csv(testFile)
+		tf_['proba'] = np.loadtxt('/Users/nkridler/Desktop/whale/moby/serialCorr.csv',delimiter=',')
+		test = self.scaler.transform(np.array(tf_))
+		#test = self.scaler.transform(np.loadtxt(testFile, delimiter=',',skiprows=1))
 		#test = self.scaler.transform(np.loadtxt(testFile, delimiter=',')[:,self.indices])
 		X, y = self.shuffle()
 		clf.fit(X,y)

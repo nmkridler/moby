@@ -4,7 +4,7 @@ import cv2
 import cv2.cv as cv
 import pylab as pl
 from scipy.signal import convolve2d
-
+from scipy.stats import skew
 def bounds(x,y):
 	return [np.abs(y - (200.+(200.*x[j]/1.5))).argmin() for j in range(x.size)]
 
@@ -76,7 +76,8 @@ def timeMetrics(P, b,maxM=50):
 	cf_ = [np.sum(P[i,:]*b)/np.sum(P[i,:]) for i in range(maxM)]
 	#cf_ = [cf for cf in np.convolve(cf_,np.ones(5),'same')/5.]
 	bw_ = [np.sum(P[i,:]*(b - cf_[i])*(b - cf_[i]))/np.sum(P[i,:]) for i in range(maxM)]
-	return cf_ + bw_	
+	sk_ = [skew(P[i,:]) for i in range(maxM)]
+	return cf_ + bw_ + sk_
 
 def oopsMetrics(P, b,maxM=50):
 	"""Centroids and bandwidth for each time slice"""

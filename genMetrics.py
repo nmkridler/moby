@@ -75,6 +75,8 @@ def main():
 		hdr_ += ['centTime_%04d'%i]
 	for i in range(50):
 		hdr_ += ['bwTime_%04d'%i]
+	for i in range(50):
+		hdr_ += ['skewTime_%04d'%i]
 
 	# Add time metrics
 	for i in range(50):
@@ -89,9 +91,9 @@ def main():
 	outHdr = ','.join(hdr_)
 
 	# Flags to control metric generation
-	trainOutFile = baseDir+'workspace/baseTrain7.csv'
-	testOutFile = baseDir+'workspace/baseTest7.csv'
-	trainData = True
+	trainOutFile = baseDir+'workspace/baseTrain8.csv'
+	testOutFile = baseDir+'workspace/baseTest8.csv'
+	trainData = False
 	writeToFile = True
 	up_ = metrics.bounds(bins,freqs)
 	if trainData:
