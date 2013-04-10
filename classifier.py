@@ -34,14 +34,7 @@ class Classify(object):
 		"""
 		d_ = pd.read_csv(trainFile)
 		if orderFile not None:
-			d_['proba'] = 0.
-			p_ = pd.read_csv(orderFile)
-			nH1 = int(np.sum(p_.Truth))
-			for id_ in range(p_.Index.size):
-				if int(p_.Truth[id_]) == 1:
-					d_.proba[int(p_.Index[id_])] = p_.Proba[id_]
-				else:
-					d_.proba[int(p_.Index[id_])+nH1] = p_.Proba[id_]
+			d_['proba'] = np.loadtxt(orderFile,delimiter=',')
 
 		# Set truth, index, train, and header
 		self.truth = np.array(d_.Truth)
@@ -132,9 +125,9 @@ class Classify(object):
 
 		"""
 		tf_ = pd.read_csv(testFile)
-		
+
 		if orderFile not None:
-			tf_['proba'] = np.loadtxt('/Users/nkridler/Desktop/whale/moby/serialCorr32.csv',delimiter=',')
+			tf_['proba'] = np.loadtxt(orderFile,delimiter=',')
 		
 		test = self.scaler.transform(np.array(tf_)[:,self.indices])
 		X, y = self.shuffle()

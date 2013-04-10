@@ -9,7 +9,6 @@ import pylab as pl
 
 import metrics
 import plotting
-import filters
 import fileio
 import templateManager
 import cv2

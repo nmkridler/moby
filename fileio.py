@@ -3,11 +3,8 @@
 import random
 import numpy as np
 import aifc
-import scipy.fftpack as spFFT
 from matplotlib import mlab
 import cv2
-import filters
-from glob import glob
 import pylab as pl
 
 

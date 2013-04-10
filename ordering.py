@@ -6,6 +6,7 @@ import pylab as pl
 import pandas as pd
 import fileio
 
+
 def writeToFile(out,outname='out.csv'):
 	""""""
 	file = open(outname,'w')
@@ -23,12 +24,28 @@ def main():
 	dataDir = baseDir+'data/'
 
 	# Open up the train file
-	train_ = pd.read_csv(dataDir+'train.csv')
-	order32_ = orderMetric(pd.label,32)
+	train = fileio.TrainData(dataDir+'train.csv',dataDir+'train/')
+	t_ = pd.read_csv(dataDir+'train.csv')
+	order32_ = orderMetric(t_.label,32)
 	order64_ = orderMetric(pd.label,64)
 
-	writeToFile(order32_,'corr32.csv')
-	writeToFile(order64_,'corr64.csv')
+	# Reorder the data
+	reorder32 = order32_.copy()
+	reorder64 = order64_.copy()
+	k = 0
+	for i in xrange(train.numH1):
+		j = int(train.h1[i].split('.')[0][5:])
+		reorder32[k] = order32_[j] 
+		reorder64[k] = order64_[j] 
+		k += 1
+	for i in xrange(train.numH0):
+		j = int(train.h0[i].split('.')[0][5:])
+		reorder32[k] = order32_[j] 
+		reorder64[k] = order64_[j] 
+		k += 1
+
+	writeToFile(reorder32,'corr32.csv')
+	writeToFile(reorder64,'corr64.csv')
 
 	# There are 84503 samples
 	trainSize = 30000
