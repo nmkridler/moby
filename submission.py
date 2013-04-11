@@ -18,7 +18,7 @@ def main():
 		outfile='submit32.sub')
 
 	# Generate a submission with corr64 and no time metrics
-	noTime = range(150) + range(385,445)
+	noTime = np.array(range(150) + range(385,448))
 	test = Classify(trainFile=baseDir+'workspace/trainMetrics.csv',
 					orderFile=baseDir+'moby/corr64.csv',
 					useCols=noTime)
