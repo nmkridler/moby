@@ -14,7 +14,7 @@ import templateManager
 import cv2
 
 def main():
-	baseDir = '/Users/nkridler/Desktop/whale/' # Base directory
+	baseDir = '/home/nick/whale/' # Base directory
 
 	###################### SET OUTPUT FILE NAME HERE ########################
 	trainOutFile = baseDir+'workspace/trainMetrics.csv'
@@ -49,16 +49,16 @@ def main():
 	for i in range(train.numH1):
 		P, freqs, bins = train.H1Sample(i,params=params)
 		out = metrics.computeMetrics(P, tmpl, bins, maxTime)
-		out += metrics.highFreqTemplate(P, bar_, bins)
-		out += metrics.highFreqTemplate(P, bar1_, bins)
-		out += metrics.highFreqTemplate(P, bar2_, bins)
+		out += metrics.highFreqTemplate(P, bar_)
+		out += metrics.highFreqTemplate(P, bar1_)
+		out += metrics.highFreqTemplate(P, bar2_)
 		hL.append([1, i] + out)
 	for i in range(train.numH0):
 		P, freqs, bins = train.H0Sample(i,params=params)
 		out = metrics.computeMetrics(P, tmpl, bins, maxTime)
-		out += metrics.highFreqTemplate(P, bar_, bins)
-		out += metrics.highFreqTemplate(P, bar1_, bins)
-		out += metrics.highFreqTemplate(P, bar2_, bins)
+		out += metrics.highFreqTemplate(P, bar_)
+		out += metrics.highFreqTemplate(P, bar1_)
+		out += metrics.highFreqTemplate(P, bar2_)
 		hL.append([0, i] + out)
 	hL = np.array(hL)
 	file = open(trainOutFile,'w')

@@ -6,7 +6,6 @@ import pylab as pl
 from matplotlib import mlab
 import cv2
 import fileio
-import filters
 import metrics
 
 class TemplateManager(object):

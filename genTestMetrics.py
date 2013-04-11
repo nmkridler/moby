@@ -47,9 +47,9 @@ def main():
 	for i in range(test.nTest):
 		P, freqs, bins = test.TestSample(i+1,params=params)
 		out = metrics.computeMetrics(P, tmpl, bins, maxTime)
-		out += metrics.highFreqTemplate(P, bar_, bins)
-		out += metrics.highFreqTemplate(P, bar1_, bins)
-		out += metrics.highFreqTemplate(P, bar2_, bins)
+		out += metrics.highFreqTemplate(P, bar_)
+		out += metrics.highFreqTemplate(P, bar1_)
+		out += metrics.highFreqTemplate(P, bar2_)
 		hL.append(out)			
 	hL = np.array(hL)
 
