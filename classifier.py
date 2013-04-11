@@ -18,23 +18,26 @@ def getAuc(clf,X,y,n_estimators):
 class Classify(object):
 	""" Classification Object
 	"""
-	def __init__(self, trainFile=''):
+	def __init__(self, trainFile='', orderFile=None, useCols=None):
 		""""""
-		self.loadTrain(trainFile)
+		self.trainFile = trainFile
+		self.orderFile = orderFile
+		self.indices = useCols
+		self.loadTrain()
 		self.m, self.n = self.train.shape
 		self.scaler = StandardScaler()
 		self.scaler.fit(self.train)
 		
-	def loadTrain(self, trainFile='', orderFile=None, useCols=None):
+	def loadTrain(self):
 		""" Load the training data
 
 			Args:
 				trainFile: string
 					training metrics file
 		"""
-		d_ = pd.read_csv(trainFile)
-		if orderFile not None:
-			d_['proba'] = np.loadtxt(orderFile,delimiter=',')
+		d_ = pd.read_csv(self.trainFile)
+		if self.orderFile is not None:
+			d_['proba'] = np.loadtxt(self.orderFile,delimiter=',')
 
 		# Set truth, index, train, and header
 		self.truth = np.array(d_.Truth)
@@ -42,8 +45,7 @@ class Classify(object):
 		self.train = np.array(d_.ix[:,2:])
 		self.hdr = d_.columns[2:]
 	
-		if useCols not None:
-			self.indices = useCols
+		if self.indices is not None:
 			self.train = self.train[:,self.indices]
 			self.hdr = [self.hdr[i] for i in self.indices]
 		else:
@@ -101,7 +103,7 @@ class Classify(object):
 		pl.show()
 
 		# Save to file
-		if outFile not None:
+		if outFile is not None:
 			outP = np.empty((self.m,3))
 			for i in range(self.m):
 				outP[i,:] = np.array([y[i], self.index[self.p[i]], y_[i,1]])
@@ -126,7 +128,7 @@ class Classify(object):
 		"""
 		tf_ = pd.read_csv(testFile)
 
-		if orderFile not None:
+		if orderFile is not None:
 			tf_['proba'] = np.loadtxt(orderFile,delimiter=',')
 		
 		test = self.scaler.transform(np.array(tf_)[:,self.indices])
