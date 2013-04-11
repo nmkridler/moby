@@ -13,7 +13,7 @@ import cv2
 
 def main():
 	###################### WORKING DIRECTORY ########################
-	baseDir = '/Users/nkridler/Desktop/whale/'
+	baseDir = '/home/nick/whale/'
 
 	###################### SET OUTPUT FILE NAME HERE ########################
 	testOutFile = baseDir+'workspace/testMetrics.csv'
@@ -24,6 +24,7 @@ def main():
 	maxTime = 60 # Number of time slice metrics
 
 	######################## BUILD A TestData OBJECT #######################
+	train = fileio.TrainData(dataDir+'train.csv',dataDir+'train/')
 	test = fileio.TestData(dataDir+'test/')
 
 	##################### BUILD A TemplateManager OBJECT ####################
